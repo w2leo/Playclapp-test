@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class PlayerCube : MonoBehaviour
@@ -7,6 +6,15 @@ public class PlayerCube : MonoBehaviour
     private float startSpeed;
     private float maxDistance;
     private float currentDistance;
+    private Vector3 startPosition;
+
+    public void StartMoveCube(float startSpeed, float maxDistance)
+    {
+        startPosition = transform.position;
+        currentDistance = 0;
+        this.startSpeed = startSpeed;
+        this.maxDistance = maxDistance;
+    }
 
     private void Update()
     {
@@ -16,18 +24,20 @@ public class PlayerCube : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject);
+            EndMoveCube();
         }
+    }
+
+    private void EndMoveCube()
+    {
+        Debug.Log($"Cube '{gameObject.name}' passed distance = {Vector3.Distance(transform.position, startPosition)}");
+        Destroy(gameObject);
     }
 
     private void MoveCube()
     {
-        transform.Translate(Vector3.forward * startSpeed);
-        currentDistance += startSpeed * Time.deltaTime;
-    }
-
-    public void StartMove(float startSpeed, float maxDistance)
-    {
-        currentDistance = 0;
+        Vector3 oldPosition = transform.position;
+        transform.Translate(Vector3.forward * startSpeed * Time.deltaTime);
+        currentDistance += Vector3.Distance(oldPosition, transform.position);
     }
 }

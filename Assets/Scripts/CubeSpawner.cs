@@ -1,47 +1,36 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CubeSpawner : MonoBehaviour
 {
     [SerializeField] private PlayerCube cubePrefab;
     [SerializeField] private Transform spawnPoint;
-    [SerializeField] private InputField inputTime;
-    [SerializeField] private InputField inputSpeed;
-    [SerializeField] private InputField inputDistance;
+    [SerializeField] private UserInput inputTime;
+    [SerializeField] private UserInput inputSpeed;
+    [SerializeField] private UserInput inputDistance;
 
-    private float createTime;
-    private float startSpeed;
-    private float maxDistance;
+    private float createTimeInSec;
+    private float currentDelayInSec;
 
-    private float currentDelay;
+    private void InitTimer()
+    {
+        currentDelayInSec = 0;
+    }
 
     private void Update()
     {
-        currentDelay += Time.deltaTime;
-        SetValues();
-        if (currentDelay > createTime && createTime != 0)
-        {
-            SpawnCube();
-        }
-    }
+        currentDelayInSec += Time.deltaTime;
+        createTimeInSec = inputTime.GetFloatValue();
 
-    private void SetValues()
-    {
-        createTime = float.Parse(inputTime.text);
-        startSpeed = float.Parse(inputSpeed.text);
-        maxDistance = float.Parse(inputDistance.text);
+        if (currentDelayInSec > createTimeInSec && createTimeInSec > 0)
+        {
+            SpawnCube(); 
+            InitTimer();
+        }
     }
 
     private void SpawnCube()
     {
         PlayerCube newCube = Instantiate(cubePrefab, spawnPoint.position, spawnPoint.rotation);
-        newCube.StartMove(startSpeed, maxDistance);
-        currentDelay = 0;
+        newCube.StartMoveCube(inputSpeed.GetFloatValue(), inputDistance.GetFloatValue());      
     }
-
-
-
-
 }
